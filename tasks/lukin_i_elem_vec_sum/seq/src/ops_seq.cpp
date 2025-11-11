@@ -1,6 +1,6 @@
 #include "lukin_i_elem_vec_sum/seq/include/ops_seq.hpp"
 
-#include <cstddef>
+#include <numeric>
 #include <vector>
 
 #include "lukin_i_elem_vec_sum/common/include/common.hpp"
@@ -18,22 +18,17 @@ bool LukinIElemVecSumSEQ::ValidationImpl() {
 }
 
 bool LukinIElemVecSumSEQ::PreProcessingImpl() {
+  vec_size_ = static_cast<int>(GetInput().size());
   return true;
 }
 
 bool LukinIElemVecSumSEQ::RunImpl() {
-  std::vector<int> input = GetInput();
-  const auto vec_size = static_cast<size_t>(input.size());
-
-  if (vec_size == 0) {
-    GetOutput() = 0;
+  if (vec_size_ == 0) {
+    GetOutput() = 0LL;
     return true;
   }
 
-  int sum = 0;
-  for (const auto &elem : input) {
-    sum += elem;
-  }
+  OutType sum = std::accumulate(GetInput().begin(), GetInput().end(), 0LL);
 
   GetOutput() = sum;
   return true;
